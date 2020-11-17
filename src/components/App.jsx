@@ -1,15 +1,28 @@
 import './../index.css'
 import Main from './Main'
 import React from 'react'
+import {
+  BrowserRouter as Router,
+  useHistory,
+  Redirect,
+  Switch,
+  Route,
+} from "react-router-dom"
 import Header from './Header'
 import Footer from './Footer'
 import { api } from './../utils/api'
+import { apiAuth } from './../utils/apiAuth'
 import EditProfilePopup from './EditProfilePopup'
 import { CurrentUserContext } from './../context/CurrentUserContext'
 import CardDeletePopup from './CardDeletePopup'
 import EditAvatarPopup from './EditAvatarPopup'
+import ProtectedRoute from './ProtectedRoute'
 import AddPlacePopup from './AddPlacePopup'
+import { getToken } from './../utils/token'
 import ImagePopup from './ImagePopup'
+import Register from './Register'
+import Login from './Login'
+
 
 function App() {
 
@@ -19,8 +32,11 @@ function App() {
   const [isAddPlacePopupOpen, addPlacePopupOpen] = React.useState(false)
   const [currentUser, setCurrentUser] = React.useState({})
   const [selectedCard, selectCard] = React.useState(null)
+  const [loggedIn, setLoggedIn] = React.useState(false)
+  const [userData, setUserData] = React.useState({})
   const [loader, setLoader] = React.useState(true)
   const [cards, setCards] = React.useState([])
+  const history = useHistory()
 
   React.useEffect(() => {
     api.getCards('/cards')
@@ -121,43 +137,124 @@ function App() {
       .catch(error => console.log(error))
   }
 
-  return (
-    <CurrentUserContext.Provider value={currentUser}>
-      <>
-        <Header />
-        <Main
-          onEditAvatar={handleEditAvatarClick}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onCardClick={handleCardClick}
-          onTrashClick={handleTrashClick}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
-          cards={cards}
-          setLoader={setLoader}
-          loader={loader} />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen}
-          onClose={closeAllPopups}
-          onUpdateUser={handleUpdateUser} />
+  const handleLogin = (userData) => {
+    setUserData(userData);
+    setLoggedIn(true);
+  }
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen}
-          onClose={closeAllPopups}
-          onUpdateAvatar={handleUpdateAvatar} />
+  const tokenCheck = () => {
+    const jwt = getToken()
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}
-          onAddPlace={handleAddPlace} />
+    if (!jwt) {
+      return;
+    }
 
-        <CardDeletePopup isOpen={isCardDeletePopupOpen}
-          onClose={closeAllPopups}
-          onCardDelete={handleCardDelete} />
+    apiAuth.getData('/users/me', jwt)
+    .then((data) => {
+      if (data) {
+        const userInfo = {
+          id: data.data._id,
+          email: data.data.email
+        }
+        setUserData(userInfo)
+      }
+    })
+    .then(() => {
+      setLoggedIn(true)
+      history.push('/')
+    })
+    .catch(err => console.log(err));
+  }
 
-        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+  React.useEffect(() => {
+    tokenCheck();
+  }, []);
 
-        <Footer />
-      </>
-    </CurrentUserContext.Provider>
+
+return (
+ <Router>
+  <ProtectedRoute
+    path="/"
+    loggedIn={loggedIn}
+    component={
+      Main,
+      EditProfilePopup,
+      EditAvatarPopup,
+      AddPlacePopup,
+      CardDeletePopup,
+      ImagePopup
+    }
+  />
+        <Switch>
+          <CurrentUserContext.Provider value={currentUser}>
+            <Header
+              loggedIn={loggedIn}
+              userData={userData}
+              setLoggedIn={setLoggedIn}
+            />
+              <Route path="/signup">
+                <Register />
+              </Route>
+
+              <Route path="/signin">
+                <Login handleLogin={ handleLogin } />
+              </Route>
+
+              <Route>
+                {
+                  loggedIn ?
+                  <Redirect to="/" /> :
+                  <Redirect to="/signin" />
+                }
+              </Route>
+
+              <Route exact path="/">
+                <Main
+                  onEditAvatar={handleEditAvatarClick}
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onCardClick={handleCardClick}
+                  onTrashClick={handleTrashClick}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                  cards={cards}
+                  setLoader={setLoader}
+                  loader={loader}
+                />
+
+                <EditProfilePopup
+                  isOpen={isEditProfilePopupOpen}
+                  onClose={closeAllPopups}
+                  onUpdateUser={handleUpdateUser}
+                />
+
+                <EditAvatarPopup
+                  isOpen={isEditAvatarPopupOpen}
+                  onClose={closeAllPopups}
+                  onUpdateAvatar={handleUpdateAvatar}
+                />
+
+                <AddPlacePopup
+                  isOpen={isAddPlacePopupOpen}
+                  onClose={closeAllPopups}
+                  onAddPlace={handleAddPlace}
+                />
+
+                <CardDeletePopup
+                  isOpen={isCardDeletePopupOpen}
+                  onClose={closeAllPopups}
+                  onCardDelete={handleCardDelete} />
+
+                <ImagePopup
+                  card={selectedCard}
+                  onClose={closeAllPopups}
+                />
+                <Footer />
+            </Route>
+          </CurrentUserContext.Provider>
+        </Switch>
+    </Router>
   );
 }
 
