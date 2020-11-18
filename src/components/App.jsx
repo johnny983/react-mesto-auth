@@ -39,6 +39,10 @@ function App() {
   const history = useHistory()
 
   React.useEffect(() => {
+    tokenCheck();
+  }, [loggedIn]);
+
+  React.useEffect(() => {
     api.getCards('/cards')
       .then((items) => {
         const card = items.map(card => ({
@@ -166,11 +170,6 @@ function App() {
     })
     .catch(err => console.log(err));
   }
-
-  React.useEffect(() => {
-    tokenCheck();
-  }, []);
-
 
 return (
  <Router>
