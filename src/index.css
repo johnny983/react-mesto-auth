@@ -41,6 +41,7 @@
 @import url(./blocks/popup/__caption/popup__caption.css);
 @import url(./blocks/popup/__header/popup__header.css);
 @import url(./blocks/popup/__register/popup__register.css);
+@import url(./blocks/popup/__register/_hint/popup__register_hint.css);
 @import url(./blocks/success/success.css);
 @import url(./blocks/decline/decline.css);
 @import url(./blocks/popup/__input/popup__input.css);

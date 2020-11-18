@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocation, useHistory } from 'react-router-dom'
+import { useLocation, useHistory, Link } from 'react-router-dom'
 import { apiAuth } from './../utils/apiAuth'
 import { setToken } from './../utils/token'
 import InfoTooltip from './InfoTooltip'
@@ -52,6 +52,8 @@ const handleLoginSubmit = (e) => {
         setErrorMessage('');
         props.handleLogin(data.user);
         history.push('/');
+      } else {
+        setErrorMessage('Что-то пошло не так!')
       }
     })
     .catch(err => console.log(err));
@@ -63,8 +65,7 @@ const handleLoginSubmit = (e) => {
         <h2 className="popup__header">{ location.pathname === '/signup' ? 'Регистрация' : 'Вход' }</h2>
         <form
           onSubmit={ location.pathname === '/signup' ? handleRegisterSubmit : handleLoginSubmit }
-          className={`popup__form popup__${props.name}-form`}
-          name={`popup-${props.name}-form`}
+          className="popup__form"
           method="post"
           action="#"
           noValidate
@@ -100,6 +101,9 @@ const handleLoginSubmit = (e) => {
             className="popup__button"
           >{ location.pathname === '/signup' ? 'Регистрация' : 'Вход' }</button>
 
+          { location.pathname === '/signup' &&
+            <div className="popup__register_hint">Уже зарегистрированы? <Link className="popup__register_link" to="/signin">Войти</Link></div>
+          }
           <div className="popup__input-error_active" id="common-input-error">{ errorMessage }</div>
         </form>
       </div>
