@@ -8,10 +8,11 @@ function Header(props) {
   const history = useHistory();
   const location = useLocation();
 
+  console.log( props.loggedIn, props.userData )
+
   function signOut(){
     removeToken()
     props.setLoggedIn(false)
-    history.push('/signin');
   }
 
   return (
@@ -21,7 +22,7 @@ function Header(props) {
         <span className="header__email">{ props.loggedIn && props.userData ? props.userData.email : null }</span>
           { props.loggedIn ?
 
-            <Link className="header__link" onMouseDown={ signOut } to='/'>
+            <Link className="header__link" onClick={ signOut } to='/signin'>
             Выйти
             </Link> :
 

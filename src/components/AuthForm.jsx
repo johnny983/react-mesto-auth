@@ -48,9 +48,9 @@ const handleLoginSubmit = (e) => {
 
       if (data.token) {
         setToken(data.token);
+        props.handleLogin(data.user);
         setInputData({ email: '', password: ''});
         setErrorMessage('');
-        props.handleLogin(data.user);
         history.push('/');
       }
     })
