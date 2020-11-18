@@ -8,8 +8,6 @@ function Header(props) {
   const history = useHistory();
   const location = useLocation();
 
-  console.log( props.loggedIn, props.userData )
-
   function signOut(){
     removeToken()
     props.setLoggedIn(false)
