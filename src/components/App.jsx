@@ -40,7 +40,7 @@ function App() {
 
   React.useEffect(() => {
     tokenCheck();
-  }, [loggedIn]);
+  }, [ loggedIn ]);
 
   React.useEffect(() => {
     api.getCards('/cards')
