@@ -163,7 +163,6 @@ function App() {
         }
         setUserData(userInfo)
         setLoggedIn(true)
-        history.push('/')
       }
     })
     .catch(err => console.log(err));
