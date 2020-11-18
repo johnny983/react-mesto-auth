@@ -1,11 +1,9 @@
 import React from 'react'
 import Logo from './../images/logo-mesto.svg'
-import { useLocation, Link, useHistory } from "react-router-dom"
+import { useLocation, Link } from "react-router-dom"
 import { removeToken } from './../utils/token'
 
 function Header(props) {
-
-  const history = useHistory();
   const location = useLocation();
 
   function signOut(){
