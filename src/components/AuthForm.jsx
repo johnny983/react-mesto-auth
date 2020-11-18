@@ -52,11 +52,11 @@ const handleLoginSubmit = (e) => {
         setErrorMessage('');
         props.handleLogin(data.user);
         history.push('/');
-      } else {
-        setErrorMessage('Что-то пошло не так!')
       }
     })
-    .catch(err => console.log(err));
+    .catch((err) => {
+      setErrorMessage(err)
+    })
   }
 
   return (
@@ -104,7 +104,7 @@ const handleLoginSubmit = (e) => {
           { location.pathname === '/signup' &&
             <div className="popup__register_hint">Уже зарегистрированы? <Link className="popup__register_link" to="/signin">Войти</Link></div>
           }
-          <div className="popup__input-error_active" id="common-input-error">{ errorMessage }</div>
+          <div className="popup__input-error_active inverted" id="common-input-error">{ errorMessage }</div>
         </form>
       </div>
       <InfoTooltip
