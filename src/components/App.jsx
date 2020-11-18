@@ -162,11 +162,9 @@ function App() {
           email: data.data.email
         }
         setUserData(userInfo)
+        setLoggedIn(true)
+        history.push('/')
       }
-    })
-    .then(() => {
-      setLoggedIn(true)
-      history.push('/')
     })
     .catch(err => console.log(err));
   }
