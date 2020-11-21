@@ -2,10 +2,10 @@ import React from 'react'
 import AuthForm from './AuthForm'
 
 
-const Login = ({handleLogin}) => {
+const Login = (props) => {
   return (
       <div className="popup__container_auth">
-        <AuthForm handleLogin={handleLogin} />
+        <AuthForm handleLogin={props.handleLogin} login={props.login} />
       </div>
   )
 }

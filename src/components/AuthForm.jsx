@@ -1,16 +1,12 @@
 import React from 'react'
-import { useLocation, useHistory, Link } from 'react-router-dom'
-import { apiAuth } from './../utils/apiAuth'
-import { setToken } from './../utils/token'
+import { useLocation, Link } from 'react-router-dom'
 import InfoTooltip from './InfoTooltip'
 
 
 function AuthForm(props) {
-  const location = useLocation();
-  const history = useHistory();
 
-  const [ regStatus, setRegStatus] = React.useState('')
-  const [ errorMessage, setErrorMessage] = React.useState('')
+  const location = useLocation();
+
   const [ inputData, setInputData] = React.useState({
     email: '',
     password: ''
@@ -26,37 +22,13 @@ function AuthForm(props) {
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault()
-      apiAuth.auth(location.pathname, 'POST', inputData)
-      .then((res) => {
-        if (res.statusCode !== 400)
-        setErrorMessage('')
-        setRegStatus('success')
-      })
-    .catch((err) => {
-      setRegStatus('decline')
-      setErrorMessage(err)
-    })
+      props.register(location.pathname, 'POST', inputData)
   }
 
 const handleLoginSubmit = (e) => {
     e.preventDefault();
-    apiAuth.auth(location.pathname, 'POST', inputData)
-    .then((data) => {
-      if (data) {
-        setErrorMessage('Что-то пошло не так!')
-      }
-
-      if (data.token) {
-        setToken(data.token);
-        setInputData({ email: '', password: ''});
-        setErrorMessage('');
-        props.handleLogin(data.user);
-        history.push('/');
-      }
-    })
-    .catch((err) => {
-      setErrorMessage(err)
-    })
+    props.login(location.pathname, 'POST', inputData)
+    setInputData({ email: '', password: ''});
   }
 
   return (
@@ -104,12 +76,13 @@ const handleLoginSubmit = (e) => {
           { location.pathname === '/signup' &&
             <div className="popup__register_hint">Уже зарегистрированы? <Link className="popup__register_link" to="/signin">Войти</Link></div>
           }
-          <div className="popup__input-error_active inverted" id="common-input-error">{ errorMessage }</div>
+          <div className="popup__input-error_active inverted" id="common-input-error">{ props.errorMessage }</div>
         </form>
       </div>
       <InfoTooltip
         onClose={props.onClose}
-        regStatus={regStatus}
+        regStatus={props.regStatus}
+        setRegStatus={props.setRegStatus}
       />
     </>
   )

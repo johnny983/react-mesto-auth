@@ -13,6 +13,8 @@ function InfoTooltip(props) {
       {
         history.push('/signin')
       }
+
+    props.setRegStatus(false)
   }
 
   return (
