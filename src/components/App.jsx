@@ -3,6 +3,7 @@ import Main from './Main'
 import React from 'react'
 import {
   useHistory,
+  Redirect,
   Switch,
   Route,
 } from "react-router-dom"
@@ -243,8 +244,12 @@ return (
             />
           </Route>
 
-            <Main>
+          <Route>
+            {loggedIn ? <Redirect to="/" /> : <Redirect to="/signin" />}
+          </Route>
 
+
+            <Main>
               <EditProfilePopup
                 isOpen={isEditProfilePopupOpen}
                 onClose={closeAllPopups}
@@ -273,7 +278,6 @@ return (
                 card={selectedCard}
                 onClose={closeAllPopups}
               />
-
             </Main>
 
             <Footer />
